@@ -1,0 +1,247 @@
+object Form1: TForm1
+  Left = 5
+  Height = 583
+  Top = 114
+  Width = 471
+  Caption = 'Form1'
+  ClientHeight = 583
+  ClientWidth = 471
+  LCLVersion = '1.8.0.5'
+  object BitBtn1: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 45
+    Width = 200
+    Caption = '1 - Abrir Excel'
+    OnClick = BitBtn1Click
+    TabOrder = 0
+  end
+  object BitBtn2: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 385
+    Width = 200
+    Caption = '25 - Fechar Excel'
+    OnClick = BitBtn2Click
+    TabOrder = 1
+  end
+  object BitBtn3: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 79
+    Width = 200
+    Caption = '2 - Gravar dados'
+    OnClick = BitBtn3Click
+    TabOrder = 2
+  end
+  object BitBtn4: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 113
+    Width = 200
+    Caption = '3 - Ir Para Celula'
+    OnClick = BitBtn4Click
+    TabOrder = 3
+  end
+  object BitBtn5: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 147
+    Width = 200
+    Caption = '4 - Fonte'
+    OnClick = BitBtn5Click
+    TabOrder = 4
+  end
+  object BitBtn6: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 181
+    Width = 200
+    Caption = '5 - Negrito'
+    OnClick = BitBtn6Click
+    TabOrder = 5
+  end
+  object BitBtn7: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 215
+    Width = 200
+    Caption = '6 - Tamanho Fonte'
+    OnClick = BitBtn7Click
+    TabOrder = 6
+  end
+  object BitBtn8: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 249
+    Width = 200
+    Caption = '7 - Cor'
+    OnClick = BitBtn8Click
+    TabOrder = 7
+  end
+  object BitBtn9: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 283
+    Width = 200
+    Caption = '8 - Background'
+    OnClick = BitBtn9Click
+    TabOrder = 8
+  end
+  object BitBtn10: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 45
+    Width = 200
+    Caption = '16 - Gravar Dados (2)'
+    OnClick = BitBtn10Click
+    TabOrder = 9
+  end
+  object BitBtn11: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 84
+    Width = 200
+    Caption = '17 - Faixa BackGround'
+    OnClick = BitBtn11Click
+    TabOrder = 10
+  end
+  object BitBtn12: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 123
+    Width = 200
+    Caption = '18 - Faixa Mesclar'
+    OnClick = BitBtn12Click
+    TabOrder = 11
+  end
+  object BitBtn13: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 162
+    Width = 200
+    Caption = '19 - Faixa Valor'
+    OnClick = BitBtn13Click
+    TabOrder = 12
+  end
+  object BitBtn14: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 201
+    Width = 200
+    Caption = '20 - Exportar DataSet'
+    OnClick = BitBtn14Click
+    TabOrder = 13
+  end
+  object BitBtn19: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 317
+    Width = 200
+    Caption = '9 - Bordas'
+    OnClick = BitBtn19Click
+    TabOrder = 14
+  end
+  object BitBtn20: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 419
+    Width = 200
+    Caption = '12 - Auto Ajuste Coluna'
+    OnClick = BitBtn20Click
+    TabOrder = 15
+  end
+  object BitBtn21: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 351
+    Width = 200
+    Caption = '10 - Largura/altura'
+    OnClick = BitBtn21Click
+    TabOrder = 16
+  end
+  object BitBtn22: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 453
+    Width = 200
+    Caption = '13 - Auto Ajuste Linha'
+    OnClick = BitBtn22Click
+    TabOrder = 17
+  end
+  object BitBtn23: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 521
+    Width = 200
+    Caption = '15 - Obter Valor'
+    OnClick = BitBtn23Click
+    TabOrder = 18
+  end
+  object BitBtn24: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 487
+    Width = 200
+    Caption = '14 - Ajustar todas Colunas'
+    OnClick = BitBtn24Click
+    TabOrder = 19
+  end
+  object BitBtn25: TBitBtn
+    Left = 45
+    Height = 30
+    Top = 385
+    Width = 200
+    Caption = '11 - Centralizar Horizontal/Vertical'
+    OnClick = BitBtn25Click
+    TabOrder = 20
+  end
+  object Label1: TLabel
+    Left = 51
+    Height = 15
+    Top = 10
+    Width = 76
+    Caption = 'Siga as etapas:'
+    ParentColor = False
+  end
+  object BitBtn15: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 240
+    Width = 200
+    Caption = '21 - Visualiza Impressão'
+    OnClick = BitBtn15Click
+    TabOrder = 21
+  end
+  object BitBtn16: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 279
+    Width = 200
+    Caption = '22 - Salvar'
+    OnClick = BitBtn16Click
+    TabOrder = 22
+  end
+  object BitBtn17: TBitBtn
+    Left = 256
+    Height = 30
+    Top = 318
+    Width = 200
+    Caption = '23 - Imprimir'
+    OnClick = BitBtn17Click
+    TabOrder = 23
+  end
+  object Button1: TButton
+    Left = 256
+    Height = 30
+    Top = 352
+    Width = 200
+    Caption = '24 - Abrir Arquivo'
+    OnClick = Button1Click
+    TabOrder = 24
+  end
+  object Sheets1: TSheets
+    Celula = 'A1'
+    left = 192
+  end
+end
