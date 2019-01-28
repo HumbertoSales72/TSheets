@@ -5,7 +5,7 @@ unit ExcelSheets;
 interface
 
 uses
-  Classes, comobj, variants, db, SysUtils, Graphics, LResources, Dialogs;
+  Classes, {$IFDEF MSWINDOWS}comobj, {$ENDIF}variants, db, SysUtils, Graphics, LResources, Dialogs;
 
 
 Type
@@ -54,11 +54,13 @@ TSheets = Class(TComponent)
     FNome : Variant;
     FSheetName : Variant;
     FVisualizaExcel : boolean; //faz parte de visualizar/ocutarexcel
+
     function GetSheetName: Variant;
     function GetNome: Variant;
     procedure SetCelula(AValue: Variant);
     procedure SetNome(AValue: Variant);
     procedure SetSheetName(AValue: Variant);
+    function Alfabetico(qtd: integer): String;
   public
     function GetCelulaValor: Variant;
     function GetColunaWidth: Variant;
@@ -75,6 +77,8 @@ TSheets = Class(TComponent)
     procedure CelulaReplace(AValueAtual,AValueNovo : Variant);
     procedure CelulaBordas(direita, esquerda, superior, inferior: Boolean);
     procedure CelulaSomar(Item1,Item2: Variant);
+    procedure CelulaFormatoCurrency(Item1, Item2: Variant);
+    procedure CelulaFormatoTexto(Item1, Item2: Variant);
     procedure ColunaWidth(AValue: Variant);
     Function ColunaUltima : Integer;
     procedure ColunaAutoAjuste;
@@ -105,14 +109,15 @@ TSheets = Class(TComponent)
     procedure Cells(Linha,Coluna : Integer; AValue : Variant);
     function cells(Linha,Coluna : Integer): Variant;
     procedure Formula(Linha,Coluna: Integer; Formula : Variant);
-    procedure Dataset(MyDataSet : TDataSet;Linha,Coluna : Integer);
+    procedure Dataset(MyDataSet: TDataSet; Linha, Coluna: Integer;Titulo: String;OcultarTitulo: Boolean=false );
     procedure IrParaCelula(AValue :Variant);
     procedure imprimir;
     procedure visualizarImpressao;
     procedure VisualizarExcel;
     procedure OcutarExcel;
     function ExcelAtivado: Boolean;
-    procedure Salvar(NomedoArquivo: Variant);
+    procedure SalvarComo(NomedoArquivo: Variant);
+    procedure Salvar;
     procedure Abrir(NomedoArquivo: Variant);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -340,6 +345,17 @@ begin
 {$ENDIF}
 end;
 
+procedure TSheets.CelulaFormatoCurrency(Item1, Item2: Variant);
+begin
+  Sheet.Cells[Item1,Item2].NumberFormat := 'R$ #,##0.00';
+  Sheet.Cells[Item1,Item2].Style := 'Comma';
+end;
+
+procedure TSheets.CelulaFormatoTexto(Item1, Item2: Variant);
+begin
+  Sheet.Cells[Item1,Item2].NumberFormat := ' @';
+end;
+
 
 procedure TSheets.ColunaWidth(AValue: Variant);
 begin
@@ -518,6 +534,43 @@ begin
 {$ENDIF}
 end;
 
+function TSheets.Alfabetico(qtd : integer) : String;
+const
+  alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var
+  i,item1,item2,item3 : integer;
+begin
+  item1 := 0;
+  item2 := 0;
+  item3 := 0;
+  i := 1;
+  while  i <= qtd do
+          begin
+               item1 += 1;
+               if item1 = 27 then
+                  begin
+                    item1 := 1; //ate aqui ok
+                    item2 += 1;
+                    if item2 = 27 then
+                       begin
+                         item2 := 1;
+                         item3 += 1;
+                         if item3 = 27 then
+                            item3 := 1;
+                       end;
+                  end;
+               inc(i);
+          end;
+
+  if ord(Alpha[item1]) <> 26 then
+  result := Alpha[item1] ;
+  if ord(Alpha[item2]) <> 26 then
+  result := Alpha[item2] + Alpha[item1] ;
+  if ord(Alpha[item3]) <> 26 then
+  result := Alpha[item3] + Alpha[item2] + Alpha[item1] ;
+
+end;
+
 procedure TSheets.FaixaFonte(Faixa: Variant; FontName: Variant);
 begin
 {$IFDEF MSWINDOWS}
@@ -650,7 +703,7 @@ end;
 function TSheets.cells(Linha, Coluna: Integer): Variant;
 begin
 {$IFDEF MSWINDOWS}
-result := Sheet.Cells[Linha,Coluna].Value;
+result := ObjExcel.ActiveSheet.Cells[Linha,Coluna].Value;
 {$ENDIF}
 end;
 
@@ -658,28 +711,45 @@ end;
 procedure TSheets.Formula(Linha, Coluna: Integer; Formula: Variant);
 begin
 {$IFDEF MSWINDOWS}
+Sheet.Cells[Linha,Coluna].NumberFormat := '#.##0,00';
 Sheet.Cells[Linha,Coluna].formula := Formula;
 {$ENDIF}
 end;
 
-procedure TSheets.Dataset(MyDataSet: TDataSet; Linha, Coluna: Integer);
+procedure TSheets.Dataset(MyDataSet: TDataSet; Linha, Coluna: Integer;
+  Titulo: String; OcultarTitulo: Boolean);
 var
   Lin,Col : Integer;
   Value : Variant;
+  alpha1,alpha2 : variant;
 begin
 {$IFDEF MSWINDOWS}
-for Col := 0 to MyDataSet.FieldCount -1 do     //colunas
-     begin
-          Value := UpperCase(MyDataSet.Fields.Fields[Col].DisplayName);
-          Sheet.Cells[Linha,Coluna + Col ] := Value;
-          Sheet.Cells[Linha,Coluna + Col ].interior.color := clblack;
-          Sheet.Cells[Linha,Coluna + Col ].Font.color := clred;
-          Sheet.Cells[Linha,Coluna + Col ].Font.size := 13;
-          Sheet.Cells[Linha,Coluna + Col ].HorizontalAlignment := 3;
-          Sheet.Cells[Linha,Coluna + Col ].RowHeight := 25;
-     end;
-Linha += 1;
-//Coluna += 1;
+if OcultarTitulo = False then
+    begin
+          for Col := 0 to MyDataSet.FieldCount -1 do     //colunas (titulo)
+               begin
+                    Value := MyDataSet.Fields.Fields[col].DisplayLabel;
+                    Sheet.Cells[Linha,Coluna + Col] := Value;
+                    Sheet.Cells[Linha,Coluna + Col].interior.color := clyellow;
+                    Sheet.Cells[Linha,Coluna + Col].Font.color := clred;
+                    Sheet.Cells[Linha,Coluna + Col].Font.size := 13;
+                    Sheet.Cells[Linha,Coluna + Col].HorizontalAlignment := 3;
+                    Sheet.Cells[Linha,Coluna + Col].RowHeight := 25;
+               end;
+          alpha1 := Alfabetico(coluna) + linha.tostring;
+          alpha2 := Alfabetico(coluna + col) + linha.ToString;
+          IrParaCelula(alpha1);
+          LinhaInserir(1);
+          FaixaMesclar( alpha1+':'+alpha2);
+          FaixaValor(Alpha1+':'+alpha2,Titulo);
+          FaixaBackGround(Alpha1+':'+alpha2,clblack);
+          FaixaColor(Alpha1+':'+alpha2,clRed);
+          FaixaSize(Alpha1+':'+alpha2,14);
+          LinhaHeight(40);
+          CelulaAlignHorizontal(AHCenter);
+          CelulaAlignVertical(AVCenter);
+   end;
+Linha += 2;
 for Lin := 0 to MyDataSet.RecordCount -1 do
    begin
        for Col := 0 to MyDataSet.FieldCount -1 do
@@ -694,10 +764,13 @@ for Lin := 0 to MyDataSet.RecordCount -1 do
                 else
                   if MyDataSet.Fields.Fields[col].DataType in [ftBCD, ftFMTBcd, ftFloat, ftCurrency] then
                   begin
-                    Sheet.Cells[Linha + Lin,Coluna + Col].NumberFormat := '###.##0,0000';
-                    Sheet.Cells[Linha + Lin,Coluna + Col]:= MyDataSet.Fields.Fields[Col].AsFloat;
+                    Sheet.Cells[Linha + Lin,Coluna + Col].NumberFormat := 'R$ #,##0.00';
+                    Sheet.Cells[Linha + Lin,Coluna + Col].Style := 'Comma';
+                    Value := MyDataSet.Fields.Fields[Col].AsFloat;
+                    Sheet.Cells[Linha + Lin,Coluna + Col]:= Value;
                   end
                   else begin
+                    Sheet.Cells[Linha + Lin,Coluna + Col].NumberFormat := ' @';
                     Value := MyDataSet.Fields.Fields[Col].AsString;
                     Sheet.Cells[Linha + Lin,Coluna + Col] := Value;
                   end;
@@ -705,6 +778,7 @@ for Lin := 0 to MyDataSet.RecordCount -1 do
             end;
        MyDataSet.Next;
    end;
+ Sheet.Cells[linha + lin,coluna].rows.AutoFit;
  Sheet.rows.AutoFit;
  Sheet.Columns.AutoFit;
 {$ENDIF}
@@ -717,7 +791,6 @@ begin
   FCelula := AValue;
 {$ENDIF}
 end;
-
 
 procedure TSheets.imprimir;
 begin
@@ -762,17 +835,24 @@ begin
 ObjExcel.Quit;
 Sheet := Unassigned;
 ObjExcel.Workbooks.Open(NomedoArquivo);
-Sheet := ObjExcel.WorkBooks[1].WorkSheets[1];
+Sheet := ObjExcel.ActiveSheet;
 if ExcelAtivado then
    VisualizarExcel;
 {$ENDIF}
 end;
 
 
-procedure TSheets.Salvar(NomedoArquivo: Variant);
+procedure TSheets.SalvarComo(NomedoArquivo: Variant);
 begin
 {$IFDEF MSWINDOWS}
 Sheet.SaveAs(NomedoArquivo);
+{$ENDIF}
+end;
+
+procedure TSheets.Salvar;
+begin
+{$IFDEF MSWINDOWS}
+ObjExcel.save;
 {$ENDIF}
 end;
 
